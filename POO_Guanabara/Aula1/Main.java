@@ -42,25 +42,5 @@ public class Main {
 
         // Fechando o scanner
         scanner.close();
-
-        // Separador visual entre canetas
-        System.out.println("\n==================================\n");
-
-        // Inicializando a segunda caneta
-        Caneta caneta2 = new Caneta();
-        caneta2.modelo = "BIC Lenuvo";
-        caneta2.cor = "Preta";
-        caneta2.ponta = 0.7f;
-        caneta2.carga = 15;
-        caneta2.tampada = true;
-
-        // Exibindo o status da segunda caneta
-        System.out.println("==== INÍCIO DA SEGUNDA CANETA ====");
-        caneta2.status();
-
-        // Simulando o uso da segunda caneta
-        caneta2.destampar();
-        caneta2.rabiscar();
-        System.out.println("==== FIM DA SEGUNDA CANETA ====");
     }
 }
