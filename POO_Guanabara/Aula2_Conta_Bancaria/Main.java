@@ -7,7 +7,6 @@ public class Main {
         ContaBancaria minhaConta = new ContaBancaria();
         boolean menu = true;
         Scanner scanner = new Scanner(System.in);
-        
 
         minhaConta.infos();
 
@@ -17,6 +16,7 @@ public class Main {
             System.out.println("Para fazer um depósito, digite 'D'.");
             System.out.println("Para fazer um saque, digite 'S'.");
             System.out.println("Para consultar o seu saldo atual, digite 'C'.");
+            System.out.println("Para exibir o seu histórico, digite 'H'.");
             System.out.println("Para fechar o menu, digite 'F'.");
             System.out.println("------------------------------------------------");
             String resposta = scanner.nextLine();
@@ -27,6 +27,8 @@ public class Main {
                 minhaConta.sacar();
             } else if (resposta.equalsIgnoreCase("C")) {
                 minhaConta.consultar();
+            } else if (resposta.equalsIgnoreCase("H")) {
+                minhaConta.exibirHistorico();
             } else if (resposta.equalsIgnoreCase("F")) {
                 menu = false;
             } else {

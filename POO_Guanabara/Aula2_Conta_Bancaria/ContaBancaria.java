@@ -3,55 +3,68 @@ package POO_Guanabara.Aula2_Conta_Bancaria;
 import java.util.Scanner;
 import java.util.Random;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class ContaBancaria {
     String titular;
     float saldo;
+
     Scanner scanner = new Scanner(System.in);
     Random valorAleatorio = new Random();
-    DecimalFormat formatoSaldo = new DecimalFormat("#,##0.00");
+    DecimalFormat formatarValor = new DecimalFormat("#,##0.00");
+    ArrayList<Transacao> historico = new ArrayList<>();
 
     void infos() {
         System.out.println("Por favor, digite o seu nome abaixo: ");
         titular = scanner.nextLine();
         System.out.println("Prazer senhor(a) " + this.titular + ", Bom dia!");
         saldo = valorAleatorio.nextFloat() * 10000; // Gerando um saldo aleatório entre 0 e 10000
-        System.out.println("O saldo inicial da sua conta é: R$" + formatoSaldo.format(this.saldo));
+        System.out.println("O saldo inicial da sua conta é: R$" + formatarValor.format(this.saldo));
     }
 
-    // Método para consultar o saldo
     void consultar() {
-        System.out.println("O seu saldo atual é: R$" + saldo);
+        System.out.println("O seu saldo atual é: R$" + formatarValor.format(saldo));
     }
 
-    // Método para depositar um valor
     void depositar() {
         System.out.print("Digite o valor que você deseja depositar: ");
-        float valor = scanner.nextFloat();
-        if (valor > 0) {
-            saldo += valor;
-            System.out.println("Depósito de R$" + valor + " realizado com sucesso. Seu saldo atual é de " + formatoSaldo.format(saldo) + "R$.");
+        float deposito = scanner.nextFloat();
+        if (deposito > 0) {
+            saldo += deposito;
+            System.out.println("Depósito de R$" + formatarValor.format(deposito) + " realizado com sucesso. Seu saldo atual é de R$" + formatarValor.format(saldo) + ".");
+
+            Transacao transacao = new Transacao("Depósito", deposito);
+            historico.add(transacao);
         } else {
             System.out.println("Valor de depósito inválido. Informe um valor acima de R$0,00.");
         }
         scanner.nextLine(); // Consumir a nova linha remanescente
     }
 
-    // Método para sacar um valor
     void sacar() {
-        System.out.println("Quanto você deseja sacar? ");
+        System.out.print("Quanto você deseja sacar? ");
         float saque = scanner.nextFloat();
         if (saque <= saldo) {
             saldo -= saque;
-            System.out.println("O seu saldo era de R$" + formatoSaldo.format(saldo + saque) + ", e o valor do saque foi de R$" + formatoSaldo.format(saque) + ". Agora o seu saldo é de R$" + formatoSaldo.format(saldo) + ".");
+            System.out.println("O seu saldo era de R$" + formatarValor.format(saldo + saque) + ", e o valor do saque foi de R$" + formatarValor.format(saque) + ". Agora o seu saldo é de R$" + formatarValor.format(saldo) + ".");
+
+            Transacao transacao = new Transacao("Saque", saque);
+            historico.add(transacao);
         } else {
             System.out.println("Você não possui saldo suficiente para fazer esse saque.");
         }
         scanner.nextLine(); // Consumir a nova linha remanescente
     }
 
-    // Método para exibir o titular da conta
-    public void exibirTitular() {
+    void exibirTitular() {
         System.out.println("Titular da conta: " + titular);
+    }
+
+    void exibirHistorico() {
+        System.out.println("Você fez " + historico.size() + " transações até o momento. Sendo elas: ");
+        for (Transacao posicaoNoHistorico : historico) {
+            System.out.println(posicaoNoHistorico.detalhes());
+        }
+        
     }
 }
