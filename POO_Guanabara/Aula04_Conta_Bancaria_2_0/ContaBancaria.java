@@ -1,11 +1,14 @@
 package POO_Guanabara.Aula04_Conta_Bancaria_2_0;
 
+import java.util.ArrayList;
+
 public class ContaBancaria {
     private String numeroDaConta;
     private String tipo;
     private String titular;
     private Float saldoDisponivel;
     private Boolean status;
+    private ArrayList<Transacao> historicoTransacoes;
 
     public ContaBancaria(String numeroDaConta, String tipo, String titular, Float saldoDisponivel, Boolean status) {
         this.numeroDaConta = numeroDaConta;
@@ -13,7 +16,10 @@ public class ContaBancaria {
         this.titular = titular;
         this.saldoDisponivel = saldoDisponivel;
         this.status = status;
+        this.historicoTransacoes = new ArrayList<>();
     }
+
+    // Getters e Setters...
 
     public void setNumeroDaConta(String numeroDaConta) {
         this.numeroDaConta = numeroDaConta;
@@ -53,5 +59,13 @@ public class ContaBancaria {
 
     public Boolean getStatus() {
         return status;
+    }
+
+    public void adicionarTransacao(Transacao transacao) {
+        historicoTransacoes.add(transacao);
+    }
+
+    public ArrayList<Transacao> getHistoricoTransacoes() {
+        return historicoTransacoes;
     }
 }
