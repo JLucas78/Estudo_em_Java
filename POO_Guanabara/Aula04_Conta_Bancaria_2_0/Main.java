@@ -10,6 +10,7 @@ import java.util.Scanner;
 public class Main {
     private Scanner escanear = new Scanner(System.in);
     private ArrayList<ContaBancaria> listaDeContasBancarias = new ArrayList<>();
+    public ArrayList<Cobranca> cobrancas = new ArrayList<>();
     private DecimalFormat df = new DecimalFormat("0.00");
 
     public static void main(String[] args) {
@@ -17,6 +18,7 @@ public class Main {
         main.menuPrincipal();
     }
 
+    // Menu principal do sistema bancário
     public void menuPrincipal() {
         while (true) {
             System.out.println("1. Abrir uma nova conta.");
@@ -50,6 +52,7 @@ public class Main {
         }
     }
 
+    // Método para abrir uma nova conta bancária
     public void abrirNovaConta() {
         Random valorAleatorio = new Random();
         String numeroDaConta = String.format("%06d", valorAleatorio.nextInt(1000000));
@@ -90,13 +93,14 @@ public class Main {
         menudoUsuario(novaContaBancaria);
     }
 
-    public void menudoUsuario(ContaBancaria conta) {
+    // Menu específico para o usuário
+    public void menudoUsuario(ContaBancaria novaContaBancaria) {
         while (true) {
-            System.out.println("Bem-vindo " + conta.getTitular() + ", selecione a opção que você deseja: ");
+            System.out.println("Bem-vindo " + novaContaBancaria.getTitular() + ", selecione a opção que você deseja: ");
             System.out.println("1. Verificar informações da conta.");
             System.out.println("2. Depositar.");
             System.out.println("3. Sacar.");
-            if (conta.getStatus()) {
+            if (novaContaBancaria.getStatus()) {
                 System.out.println("4. Bloquear conta.");
             } else {
                 System.out.println("4. Desbloquear conta.");
@@ -108,32 +112,28 @@ public class Main {
 
             String resposta = escanear.nextLine();
 
-
             switch (resposta) {
                 case "1":
-                    infoConta(conta);
+                    infoConta(novaContaBancaria);
                     break;
                 case "2":
-                    depositar(conta);
+                    depositar(novaContaBancaria);
                     break;
                 case "3":
-                    sacar(conta);
+                    sacar(novaContaBancaria);
                     break;
                 case "4":
-                    if (conta.getStatus()) {
-                        bloquearConta(conta);
+                    if (novaContaBancaria.getStatus()) {
+                        bloquearConta(novaContaBancaria);
                     } else {
-                        desbloquearConta(conta);
+                        desbloquearConta(novaContaBancaria);
                     }
                     break;
                 case "5":
-                    excluirContaAtual(conta);
+                    excluirContaAtual(novaContaBancaria);
                     return;
                 case "6":
-                    verHistoricoTransacoes(conta);
-                    break;
-                case "7":
-                    menuDeTransferencia(conta);
+                    verHistoricoTransacoes(novaContaBancaria);
                     break;
                 case "8":
                     return;
@@ -144,205 +144,91 @@ public class Main {
         }
     }
 
-    public void infoConta(ContaBancaria conta) {
-        System.out.println("Número da conta: " + conta.getNumeroDaConta());
-        System.out.println("Tipo de conta: " + conta.getTipo());
-        System.out.println("Titular: " + conta.getTitular());
-        System.out.println("Saldo disponível: " + df.format(conta.getSaldoDisponivel()));
-        System.out.println("Status da conta: " + (conta.getStatus() ? "Ativa" : "Bloqueada"));
+    // Exibe informações da conta
+    public void infoConta(ContaBancaria novaContaBancaria) {
+        System.out.println("Número da conta: " + novaContaBancaria.getNumeroDaConta());
+        System.out.println("Tipo de conta: " + novaContaBancaria.getTipo());
+        System.out.println("Titular: " + novaContaBancaria.getTitular());
+        System.out.println("Saldo disponível: " + df.format(novaContaBancaria.getSaldoDisponivel()));
+        System.out.println("Status da conta: " + (novaContaBancaria.getStatus() ? "Ativa" : "Bloqueada"));
     }
 
-    public void depositar(ContaBancaria conta) {
-        if (conta.getStatus()) {
+    // Método para depositar na conta
+    public void depositar(ContaBancaria novaContaBancaria) {
+        if (novaContaBancaria.getStatus()) {
             System.out.println("Digite o valor do seu depósito:");
             Float deposito = escanear.nextFloat();
             escanear.nextLine(); // Consumir a nova linha remanescente
             if (deposito > 0) {
-                conta.setSaldoDisponivel(conta.getSaldoDisponivel() + deposito);
-                Transacao transacao = new Transacao("Depósito", deposito, obterDataAtual());
-                conta.adicionarTransacao(transacao);
+                novaContaBancaria.setSaldoDisponivel(novaContaBancaria.getSaldoDisponivel() + deposito);
+                Transacao novaTransacao = new Transacao("Depósito", deposito, obterDataAtual());
+                novaContaBancaria.adicionarTransacao(novaTransacao);
                 System.out.println("Depósito realizado com sucesso.");
             } else {
                 System.out.println("Insira um valor válido.");
             }
         } else {
             System.out.println("Conta bloqueada. Não é possível realizar depósito.");
-            menudoUsuario(conta);
         }
     }
 
-    public void sacar(ContaBancaria conta) {
-        if (conta.getStatus()) {
+    // Método para sacar da conta
+    public void sacar(ContaBancaria novaContaBancaria) {
+        if (novaContaBancaria.getStatus()) {
             System.out.println("Digite o valor que você deseja sacar:");
             Float saque = escanear.nextFloat();
             escanear.nextLine(); // Consumir a nova linha remanescente
-            if (saque > 0 && saque <= conta.getSaldoDisponivel()) {
-                conta.setSaldoDisponivel(conta.getSaldoDisponivel() - saque);
-                Transacao transacao = new Transacao("Saque", saque, obterDataAtual());
-                conta.adicionarTransacao(transacao);
+            if (saque > 0 && saque <= novaContaBancaria.getSaldoDisponivel()) {
+                novaContaBancaria.setSaldoDisponivel(novaContaBancaria.getSaldoDisponivel() - saque);
+                Transacao novaTransacao = new Transacao("Saque", saque, obterDataAtual());
+                novaContaBancaria.adicionarTransacao(novaTransacao);
                 System.out.println("Saque realizado com sucesso.");
-                System.out.println("Valor do saque: " + df.format(saque) + " Reais, o seu saldo atual é de " + df.format(conta.getSaldoDisponivel()) + " Reais.");
+                System.out.println("Valor do saque: " + df.format(saque) + " Reais, o seu saldo atual é de " + df.format(novaContaBancaria.getSaldoDisponivel()) + " Reais.");
             } else {
-                System.out.println("Valor inválido. Você possui " + df.format(conta.getSaldoDisponivel()) + " Reais.");
+                System.out.println("Valor inválido. Você possui " + df.format(novaContaBancaria.getSaldoDisponivel()) + " Reais.");
             }
         } else {
             System.out.println("Conta bloqueada. Não é possível realizar saque.");
         }
     }
 
-
-    public void menuDeTransferencia(ContaBancaria contaEmissora) {
-                System.out.println("1. Enviar dinheiro.");
-                System.out.println("2. Fazer uma cobrança.");
-                System.out.println("3. Visualizar cobranças a pagar.");
-                System.out.println("4. Voltar para o menu de usuário.");
-        
-                String resposta = escanear.nextLine();
-        
-                switch (resposta) {
-                    case "1":
-                        enviarDinheiro(contaEmissora);
-                        break;
-        
-                    case "2":
-                        fazerCobranca(contaEmissora);
-                        break;
-        
-                    case "3":
-                        pagarCobrancas();
-                        break;
-        
-                    case "4":
-                        return;
-        
-                    default:
-                        System.out.println("Opção inválida.");
-                }
-        }
-        
-        public void enviarDinheiro(ContaBancaria contaEmissora) {
-                System.out.println("Selecione para qual conta você deseja enviar dinheiro:");
-        
-                for (ContaBancaria conta : listaDeContasBancarias) {
-                    System.out.println(conta.getTitular());
-                }
-        
-                String titularContaReceptora = escanear.nextLine();
-        
-                System.out.println("Agora selecione o valor que você deseja enviar.");
-                Float valorEnvio = escanear.nextFloat();
-        
-                escanear.nextLine(); // Consumir a nova linha remanescente
-        
-                for (ContaBancaria conta : listaDeContasBancarias) {
-                    if (conta.getTitular().equals(titularContaReceptora)) {
-                        if (conta.getStatus()) {
-                            if (valorEnvio > 0 && valorEnvio <= contaEmissora.getSaldoDisponivel()) {
-                                conta.setSaldoDisponivel(conta.getSaldoDisponivel() + valorEnvio);
-                                contaEmissora.setSaldoDisponivel(contaEmissora.getSaldoDisponivel() - valorEnvio);
-        
-                                Transacao transacao = new Transacao("Envio", valorEnvio, obterDataAtual());
-                                conta.adicionarTransacao(transacao);
-                                System.out.println("Envio Realizado com sucesso.");
-                                return;
-                            } else {
-                                System.out.println("Valor inválido ou saldo insuficiente.");
-                                return;
-                            }
-                        } else {
-                            System.out.println("A conta do(a) " + conta.getTitular() + " atualmente está bloqueada, tente novamente mais tarde.");
-                            menudoUsuario(contaEmissora);
-                            return;
-                        }
-                    }
-                }
-                System.out.println("Conta não encontrada.");
-        }
-        
-        public void fazerCobranca(ContaBancaria contaEmissora) {
-                System.out.println("Selecione para qual conta você deseja fazer uma cobrança:");
-        
-                for (ContaBancaria conta : listaDeContasBancarias) {
-                    System.out.println(conta.getTitular());
-                }
-        
-                String titularContaReceptora = escanear.nextLine();
-        
-                System.out.println("Agora selecione o valor que você deseja cobrar.");
-                Float valorDaCobranca = escanear.nextFloat();
-        
-                escanear.nextLine(); // Consumir a nova linha remanescente
-        
-                for (ContaBancaria conta : listaDeContasBancarias) {
-                    if (conta.getTitular().equals(titularContaReceptora)) {
-                        if (conta.getStatus()) {
-                            if (valorDaCobranca > 0) {
-                                // Adicionar a lógica para criar e armazenar uma cobrança
-                                System.out.println("Cobrança realizada com sucesso.");
-                                return;
-                            } else {
-                                System.out.println("Valor inválido.");
-                                return;
-                            }
-                        } else {
-                            System.out.println("A conta do(a) " + conta.getTitular() + " atualmente está bloqueada, tente novamente mais tarde.");
-                            menudoUsuario(contaEmissora);
-                            return;
-                        }
-                    }
-                }
-                System.out.println("Conta não encontrada.");
-        }
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void bloquearConta(ContaBancaria conta) {
-        conta.setStatus(false);
+    // Método para bloquear a conta
+    public void bloquearConta(ContaBancaria novaContaBancaria) {
+        novaContaBancaria.setStatus(false);
         System.out.println("Conta bloqueada com sucesso.");
     }
 
-    public void desbloquearConta(ContaBancaria conta) {
-        conta.setStatus(true);
+    // Método para desbloquear a conta
+    public void desbloquearConta(ContaBancaria novaContaBancaria) {
+        novaContaBancaria.setStatus(true);
         System.out.println("Conta desbloqueada com sucesso.");
     }
 
-    public void excluirContaAtual(ContaBancaria conta) {
-        listaDeContasBancarias.remove(conta);
+    // Método para excluir a conta atual
+    public void excluirContaAtual(ContaBancaria novaContaBancaria) {
+        listaDeContasBancarias.remove(novaContaBancaria);
         System.out.println("Conta excluída com sucesso.");
     }
 
-    public void verHistoricoTransacoes(ContaBancaria conta) {
+    // Método para visualizar o histórico de transações da conta
+    public void verHistoricoTransacoes(ContaBancaria novaContaBancaria) {
         System.out.println("Histórico de transações:");
-        if (conta.getHistoricoTransacoes().isEmpty()) {
+        if (novaContaBancaria.getHistoricoTransacoes().isEmpty()) {
             System.out.println("Nenhuma transação realizada.");
         } else {
-            for (Transacao transacao : conta.getHistoricoTransacoes()) {
+            for (Transacao transacao : novaContaBancaria.getHistoricoTransacoes()) {
                 System.out.println(transacao);
             }
         }
     }
 
+    // Método para acessar uma conta existente
     public void acessarConta() {
         System.out.println("Digite o número da conta que você deseja acessar:");
         System.out.println(listaDeContasBancarias);
-        String numeroConta = escanear.nextLine();
+        String ContaComAcessoAtual = escanear.nextLine();
         for (ContaBancaria conta : listaDeContasBancarias) {
-            if (conta.getNumeroDaConta().equals(numeroConta)) {
-                String contaEmissora = ContaBancaria.novaContaBancaria();
+            if (conta.getNumeroDaConta().equals(ContaComAcessoAtual)) {
                 menudoUsuario(conta);
                 return;
             }
@@ -350,12 +236,21 @@ public class Main {
         System.out.println("Conta não encontrada.");
     }
 
+
+
+
+    // Lista todas as contas bancárias
     public void listar() {
-        for (ContaBancaria conta : listaDeContasBancarias) {
-            System.out.println(conta);
+        if (listaDeContasBancarias.isEmpty()) {
+            System.out.println("Nenhuma conta cadastrada.");
+        } else {
+            for (ContaBancaria conta : listaDeContasBancarias) {
+                System.out.println(conta);
+            }
         }
     }
 
+    // Excluir uma conta específica
     public void excluirContaEspecifica() {
         System.out.println("Digite o número da conta que você deseja excluir:");
         String numeroConta = escanear.nextLine();
@@ -369,6 +264,7 @@ public class Main {
         System.out.println("Conta não encontrada.");
     }
 
+    // Obtém a data atual no formato especificado
     private String obterDataAtual() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return sdf.format(new Date());
