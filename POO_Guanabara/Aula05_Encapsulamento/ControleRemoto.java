@@ -8,10 +8,10 @@ public class ControleRemoto implements Controlador {
 
     // metodos especiais
 
-    public ControleRemoto(int volume, boolean ligado, boolean tocando){
-        this.setVolume(volume);
-        this.setLigado(ligado);
-        this.setTocando(tocando);
+    public ControleRemoto(){
+        this.setVolume(30);
+        this.setLigado(false);
+        this.setTocando(false);
         
     }
 
@@ -43,6 +43,7 @@ public class ControleRemoto implements Controlador {
     @Override
     public void ligar() {
         this.setLigado(true);
+
         
     }
 
@@ -55,10 +56,10 @@ public class ControleRemoto implements Controlador {
     public void abrirMenu() {
         System.out.println("Está ligado? " + this.getLigado());
         System.out.println("Está tocando? " + this.getTocando());
-        System.out.println("Volume: " + this.getVolume());
+        System.out.print("Volume: " + this.getVolume());
 
         for(int i = 0; i <= this.getVolume(); i+=10){
-            System.out.println("[]");
+            System.out.print("|");
 
         }
        
@@ -88,24 +89,37 @@ public class ControleRemoto implements Controlador {
 
     @Override
     public void deixarMudo() {
+        if(this.getLigado() && this.getVolume() > 0){
+            this.setVolume(0);
+        }
     
     }
 
     @Override
     public void sairDoMudo() {
+        if(this.getLigado() && this.getVolume() == 0){
+            setVolume(50);
+
+        }
     
     }
 
     @Override
     public void play() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'play'");
+        if(this.getLigado() && !(this.getTocando())){
+            this.setTocando(true)
+
+        }
+       
     }
 
     @Override
     public void pause() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'pause'");
+        if(this.getLigado() && this.getTocando()){
+            this.setTocando(false);
+
+        }
+        
     }
 
 
