@@ -46,11 +46,11 @@ public class Luta {
 
     // Metodos publicos
 
-    public void marcarLuta(Lutador lutador1, Lutador lutador2){
-        if(lutador1.getCategoria().equals(lutador2.getCategoria()) && lutador1 != lutador2){
+    public void marcarLuta(Lutador desafiado, Lutador desafiante){
+        if(desafiado.getCategoria().equals(desafiante.getCategoria()) && desafiado != desafiante){
             this.setAprovada(true);
-            this.setDesafiado(lutador1);
-            this.setDesafiante(lutador2);
+            this.setDesafiado(desafiado);
+            this.setDesafiante(desafiante);
         } else{
             this.setAprovada(false);
             this.setDesafiado(null);
@@ -75,37 +75,25 @@ public class Luta {
                 System.out.println("######################");
                 System.out.println("Empatou!");
                 this.desafiado.empatarLuta();
-                this.desafiante.empatarLuta();
-                    
+                this.desafiante.empatarLuta();      
                     break;
                 case 1:
                 System.out.println("######################");
                 System.out.println(desafiado.getNome() + " Venceu a luta!");
                 this.desafiado.ganharLuta();
-                this.desafiante.perderLuta();
-                    
+                this.desafiante.perderLuta();      
                     break;
                 case 2:
                 System.out.println("######################");
                 System.out.println(desafiante.getNome() + " Venceu a luta!");
                 this.desafiante.ganharLuta();
-                this.desafiado.perderLuta();
-                    
-                    break;
-
-
-            
+                this.desafiado.perderLuta();            
+                    break;       
                 default:
                     break;
             }
-
-
         } else{
             System.out.println("A luta não pode acontecer");
-
         }
     }
-
-    
-    
 }

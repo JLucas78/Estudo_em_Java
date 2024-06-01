@@ -71,7 +71,7 @@ public class Lutador {
 
     public void setCategoria() {
         if (peso < 52.2) {
-            this.categoria = "Invalido"; // Corrigir para atribuir diretamente a categoria
+            this.categoria = "Invalido, peso abaixo da categoria minima."; // Corrigir para atribuir diretamente a categoria
         } else if (peso <= 70.3) {
             this.categoria = "Leve";
         } else if (peso <= 83.9) {
@@ -79,7 +79,7 @@ public class Lutador {
         } else if (peso <= 120.2) {
             this.categoria = "Pesado";
         } else {
-            this.categoria = "Invalido";
+            this.categoria = "Invalido, peso acima da categoria maxima.";
         }
     }
 
@@ -92,7 +92,7 @@ public class Lutador {
     }
 
     public int getVitorias() {
-        return vitorias; // Corrigir retorno para vitorias
+        return vitorias; 
     }
 
     public void setVitorias(int vitorias) {
@@ -122,7 +122,7 @@ public class Lutador {
     }
 
     public void apresentar(){
-        System.out.println("Chegou a hora, aprensetamnos o lutador " + this.getNome());
+        System.out.println("Chegou a hora, apresentamnos o lutador " + this.getNome());
         System.out.println("diretamente do " +this.getNacionalidade());
         System.out.println(this.getNome() + " tem " + getIdade() + " anos de idade.");
         System.out.println("Com " + this.getAltura() + "m de altura.");
