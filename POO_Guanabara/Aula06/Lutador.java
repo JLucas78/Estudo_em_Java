@@ -1,6 +1,7 @@
 package POO_Guanabara.Aula06;
 
 public class Lutador {
+    // atributos gerais
     private String nome;
     private String nacionalidade;
     private int idade;
@@ -10,6 +11,20 @@ public class Lutador {
     private int vitorias;
     private int derrotas;
     private int empates;
+
+
+    // Atributos derivados
+    private float forca;
+    private float agilidfloatade;
+    private float resistencia;
+    private float tecnica;
+    private int moral; // vai de 0 á 100%
+    private int energia; // vai de 0 á 100%
+
+
+    // Atributos finais
+    private int golpe;
+    private int chanceDeDesvio;
 
     // Metodos
 
