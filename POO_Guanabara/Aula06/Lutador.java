@@ -1,7 +1,7 @@
 package POO_Guanabara.Aula06;
 
 public class Lutador {
-    // atributos gerais
+    // Atributos gerais
     private String nome;
     private String nacionalidade;
     private int idade;
@@ -14,20 +14,22 @@ public class Lutador {
 
 
     // Atributos derivados
-    private float forca;
-    private float agilidfloatade;
-    private float resistencia;
-    private float tecnica;
+    private float forca; // vai de 1 á 10
+    private float agilidade; // vai de 1 á 10
+    private float resistencia; // vai de 1 á 10
+    private float tecnica; // vai de 1 á 10
     private int moral; // vai de 0 á 100%
     private int energia; // vai de 0 á 100%
 
 
     // Atributos finais
-    private int golpe;
+    private int danoDoGolpe;
     private int chanceDeDesvio;
 
-    // Metodos
 
+
+
+    // Metodos dos atributos gerais
     public Lutador(String nome, String nacionalidade, int idade, float peso, float altura, int vitorias, int derrotas, int empates){
         this.setNome(nome);
         this.setNacionalidade(nacionalidade);
@@ -122,7 +124,48 @@ public class Lutador {
         this.empates = empates;
     }
 
-    // Metodos gerais
+
+    // Metodos dos atributos derivados
+
+
+     // Método para calcular a força
+     private static double normalizar(double valor, double ideal, double min, double max) {
+        return 1 - Math.abs((valor - ideal) / (ideal - min));
+    }
+
+    public void setForca() {
+        double idadeIdeal = 28;
+        double pesoIdeal = 120;
+        double alturaIdeal = 2.0;
+        double idadeMin = 18;
+        double idadeMax = 40;
+        double pesoMin = 50;
+        double pesoMax = 120;
+        double alturaMin = 1.5;
+        double alturaMax = 2.0;
+
+        double idadeNormalizada = normalizar(this.idade, idadeIdeal, idadeMin, idadeMax);
+        double pesoNormalizado = normalizar(this.peso, pesoIdeal, pesoMin, pesoMax);
+        double alturaNormalizada = normalizar(this.altura, alturaIdeal, alturaMin, alturaMax);
+
+        double mediaNormalizada = (idadeNormalizada + pesoNormalizado + alturaNormalizada) / 3.0;
+        this.forca = (int) Math.round(mediaNormalizada * 10);
+
+        if (this.forca < 1) this.forca = 1;
+        if (this.forca > 10) this.forca = 10;
+    }
+
+
+
+
+    // Metodos dos atributos finais
+    
+
+
+
+
+
+    // Metodos da luta
 
     public void ganharLuta(){
         setVitorias(this.getVitorias()+1);

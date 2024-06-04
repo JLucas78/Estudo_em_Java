@@ -44,6 +44,14 @@ public class Luta {
     }
 
 
+    // Metodos para os atributos derivados
+
+    // Método para calcular a força
+    private static double normalizar(double valor, double ideal, double min, double max) {
+        return 1 - Math.abs((valor - ideal) / (ideal - min));
+    }
+
+
     // Metodos publicos
 
     public void marcarLuta(Lutador desafiado, Lutador desafiante){
