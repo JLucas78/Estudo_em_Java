@@ -15,6 +15,7 @@ public class Lutador {
     private int vitorias;
     private int derrotas;
     private int empates;
+    public int lutas;
 
 
 
@@ -30,7 +31,7 @@ public class Lutador {
     // Atributos finais
     private int danoDoGolpe;
     private int chanceDeDesvio;
-    private int vidaBase = 180;
+    private int vidaBase = 300;
     private int vida;
 
 
@@ -43,7 +44,7 @@ public class Lutador {
     // Metodos dos atributos gerais
     
     // Construtor
-        public Lutador(String nome, String nacionalidade, int idade, float peso, float altura, int vitorias, int derrotas, int empates, int resistencia, int tecnica) {
+        public Lutador(String nome, String nacionalidade, int idade, float peso, float altura, int vitorias, int derrotas, int empates, int tecnica, int luta) {
             this.nome = nome;
             this.nacionalidade = nacionalidade;
             this.idade = idade;
@@ -52,7 +53,6 @@ public class Lutador {
             this.vitorias = vitorias;
             this.derrotas = derrotas;
             this.empates = empates;
-            this.resistencia = resistencia;
             this.tecnica = tecnica;
             this.moral = 100;
             this.energia = 100;
@@ -131,12 +131,22 @@ public class Lutador {
         }
     }
 
+    // Metodos para definir a quantidade de  lutas
+
+    public int getLutas(){
+        return lutas;
+    }
+
+    public void setLutas(){
+        this.lutas = valorAleatorio.nextInt(100) + 1;
+    }
+
     public int getDerrotas() {
         return derrotas;
     }
 
-    public void setDerrotas(int derrotas) {
-        this.derrotas = derrotas;
+    public void setDerrotas() {
+        this.derrotas = this.getLutas() * 0.2f;
     }
 
     public int getVitorias() {
@@ -157,7 +167,6 @@ public class Lutador {
 
 
     // Metodos dos atributos derivados
-
 
     // Método para normalizar os dados
      private static double normalizar(double valor, double idealMin, double idealMax, double min, double max) {
@@ -247,6 +256,27 @@ public class Lutador {
     }
 
 
+    // Método para calcular a Tecnica
+
+    public void setTecnica(){
+        // Intervalos ideias
+        double idadeIdealMin = 32;
+        double idadeIdealMax = 38;
+        double lutasIdealMin = 80;
+        double lutasIdealMax = 100;
+
+        // Limites dos requisitos
+        double idadeMin = 18;
+        double idadeMax = 40;
+        double lutasMin = 0;
+        double lutasMax = 100;
+
+        double idadeNormalizada = normalizar(this.idade, idadeIdealMin, idadeIdealMax, idadeMin, idadeMax);
+        double lutasNormalizadas = normalizar(this.luta, lutasIdealMin, lutasIdealMax, lutasMin, lutasMax);
+    }
+
+
+
 
 
 
@@ -254,14 +284,34 @@ public class Lutador {
 
     // Método para calcular a vida
     public void setVida() {
-        double forcaVida = this.forca * 4.5; // 45 de vida para força 10
-        double resistenciaVida = this.resistencia * 7.5; // 75 de vida para resistência 10
-        this.vida = (int) (vidaBase + forcaVida + resistenciaVida);
+        double forcaVida = this.forca * 10; // 25% da vida é baseada na força
+        this.vida = (int) (vidaBase + forcaVida); // Valor total da vida
     }
 
     // Método para calcular o dano
     public int calcularDanoDoGolpe() {
     return (int) (this.forca * (valorAleatorio.nextFloat() * 2 + 3));
+    }
+
+     // Método para calcular a resistência ao golpe
+     public int calcularResistenciaAoGolpe(Lutador atacante) {
+        // Passo 1: Calcular o dano do golpe
+        int danoDoGolpe = atacante.calcularDanoDoGolpe();
+        
+        // Passo 2: Calcular a porcentagem de resistência
+        float multiplicador = valorAleatorio.nextFloat() + 5; // Valor aleatório entre 5 e 6
+        int porcentagemIgnorada = Math.round(this.forca * multiplicador);
+        
+        // Passo 3: Aplicar a resistência ao dano do golpe
+        float danoIgnorado = danoDoGolpe * (porcentagemIgnorada / 100.0f);
+        int danoFinal = Math.round(danoDoGolpe - danoIgnorado);
+        
+        return danoFinal;
+    }
+
+    public void calculoDaChanceDeContraAtaque(Lutador defensor){
+        int chanceContraAtaque = (defensor.forca + defensor.tecnica) * 2;
+
     }
 
 
