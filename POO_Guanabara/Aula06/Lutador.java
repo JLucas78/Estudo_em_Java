@@ -11,26 +11,30 @@ public class Lutador {
     private int idade;
     private float peso;
     private float altura;
-    private String categoria;
+    private float aptidaoFisica; //vai de 1 á 10 (Gerado automaticamente)
+    private int lutas;
     private int vitorias;
     private int derrotas;
     private int empates;
-    public int lutas;
+    
+    
 
 
 
     // Atributos derivados
+    private String categoria;
     private float forca; // vai de 1 á 10 (o atributo resistencia foi mesclado a força)
     private float agilidade; // vai de 1 á 10
-    private float tecnica; // vai de 1 á 10
-    private int moral; // vai de 0 á 100%
     private int energia; // vai de 0 á 100%
-    private float aptidaoFisica; //vai de 1 á 10 (Gerado automaticamente)
+    private int experiencia;
+    private int desempenho;
+    
 
 
     // Atributos finais
-    private int danoDoGolpe;
-    private int chanceDeDesvio;
+    private float tecnica; // vai de 1 á 10
+    private int moral; // vai de 0 á 100%
+    private int danoDoGolpe; 
     private int vidaBase = 300;
     private int vida;
 
@@ -44,7 +48,7 @@ public class Lutador {
     // Metodos dos atributos gerais
     
     // Construtor
-        public Lutador(String nome, String nacionalidade, int idade, float peso, float altura, int vitorias, int derrotas, int empates, int tecnica, int luta) {
+        public Lutador(String nome, String nacionalidade, int idade, float peso, float altura, int vitorias, int derrotas, int empates, int tecnica, int luta, int experiencia) {
             this.nome = nome;
             this.nacionalidade = nacionalidade;
             this.idade = idade;
@@ -131,7 +135,17 @@ public class Lutador {
         }
     }
 
-    // Metodos para definir a quantidade de  lutas
+    // Metodos para gerir a quantidade de lutas (Vitorias, Empates e Derrotas)
+
+    // Métodos para gerir a quantidade de lutas (Vitórias, Empates e Derrotas)
+    public void gerarDadosDaLuta(){
+        setLutas();
+        setVitorias();
+        setDerrotas();
+        setEmpates();
+        calcularExperiencia();
+        calcularDesempenho();
+    }
 
     public int getLutas(){
         return lutas;
@@ -141,28 +155,93 @@ public class Lutador {
         this.lutas = valorAleatorio.nextInt(100) + 1;
     }
 
+    public int getVitorias() {
+        return vitorias; 
+    }
+
+    public void setVitorias() {
+        this.vitorias = valorAleatorio.nextInt(this.lutas + 1);
+    }
+
     public int getDerrotas() {
         return derrotas;
     }
 
     public void setDerrotas() {
-        this.derrotas = this.getLutas() * 0.2f;
-    }
-
-    public int getVitorias() {
-        return vitorias; 
-    }
-
-    public void setVitorias(int vitorias) {
-        this.vitorias = vitorias;
+        int restante = this.lutas - this.vitorias;
+        this.derrotas = valorAleatorio.nextInt(restante + 1);
     }
 
     public int getEmpates() {
         return empates;
     }
 
-    public void setEmpates(int empates) {
-        this.empates = empates;
+    public void setEmpates() {
+        this.empates = this.lutas - this.vitorias - this.derrotas;
+    }
+
+    public int getExperiencia(){
+        return experiencia;
+    }
+
+    public void calcularExperiencia() {
+        // Intervalos ideais
+        double idadeIdealMin = 32;
+        double idadeIdealMax = 38;
+        double numeroDeLutasIdealMin = 80;
+        double numeroDeLutasIdealMax = 100;
+
+        // Limites dos requisitos
+        double idadeMin = 18;
+        double idadeMax = 40;
+        double numeroDeLutasMin = 1;
+        double numeroDeLutasMax = 100;
+
+        double idadeNormalizada = normalizar(this.idade, idadeIdealMin, idadeIdealMax, idadeMin, idadeMax);
+        double lutasNormalizadas = normalizar(this.lutas, numeroDeLutasIdealMin, numeroDeLutasIdealMax, numeroDeLutasMin, numeroDeLutasMax);
+        double mediaNormalizada = (idadeNormalizada + lutasNormalizadas) / 2;
+
+        this.experiencia = (int) Math.round(mediaNormalizada * 10);
+
+        if (this.experiencia < 1) {
+            this.experiencia = 1;
+        }
+
+        if (this.experiencia > 10) {
+            this.experiencia = 10;
+        }
+    }
+
+    public int getDesempenho(){
+        return desempenho;
+    }
+
+    public void calcularDesempenho() {
+        // Intervalos ideais
+        double numeroIdealDeVitoriasMin = 60;
+        double numeroIdealDeVitoriasMax = 100;
+
+        // Limites dos requisitos
+        double numeroDeVitoriasMin = 1;
+        double numeroDeVitoriasMax = 100;
+
+        double vitoriasNormalizadas = normalizar(this.vitorias, numeroIdealDeVitoriasMin, numeroIdealDeVitoriasMax, numeroDeVitoriasMin, numeroDeVitoriasMax);
+        this.desempenho = (int) Math.round(vitoriasNormalizadas * 10);
+
+        if (this.desempenho < 1){
+            this.desempenho = 1;
+        }
+
+        if (this.desempenho > 10) {
+            this.desempenho = 10;
+        }
+    }
+
+    // Método para calcular a técnica
+    public int calcularTecnica() {
+        // Técnica é influenciada pela experiência (50%) e idade (50%)
+        double tecnica = (this.experiencia * 0.5) + (normalizar(this.idade, 32, 38, 18, 40) * 5);
+        return (int) Math.round(tecnica);
     }
 
 
