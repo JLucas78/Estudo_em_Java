@@ -28,6 +28,7 @@ public class Lutador {
     private int energia; // vai de 0 á 100%
     private int experiencia;
     private int desempenho;
+    private int estadoFisico // Baseado na idade e aptidão fisica
     
 
 
@@ -48,25 +49,28 @@ public class Lutador {
     // Metodos dos atributos gerais
     
     // Construtor
-        public Lutador(String nome, String nacionalidade, int idade, float peso, float altura, int vitorias, int derrotas, int empates, int tecnica, int luta, int experiencia) {
-            this.nome = nome;
-            this.nacionalidade = nacionalidade;
-            this.idade = idade;
-            this.peso = peso;
-            this.altura = altura;
-            this.vitorias = vitorias;
-            this.derrotas = derrotas;
-            this.empates = empates;
-            this.tecnica = tecnica;
-            this.moral = 100;
-            this.energia = 100;
-            this.setAgilidade();
-            this.setForca();
-            this.setVida();
-            this.setCategoria();
-            this.setAptidaoFisica();
-        }
-
+    public Lutador(String nome, String nacionalidade, int idade, float peso, float altura, int vitorias, int derrotas, int empates, int experiencia) {
+        this.nome = nome;
+        this.nacionalidade = nacionalidade;
+        this.idade = idade;
+        this.peso = peso;
+        this.altura = altura;
+        this.vitorias = vitorias;
+        this.derrotas = derrotas;
+        this.empates = empates;
+        this.experiencia = experiencia;
+        this.tecnica = calcularTecnica(); // Corrigido: Calcula a técnica ao criar o objeto
+        this.moral = 100;
+        this.energia = 100;
+        this.setAgilidade();
+        this.setForca();
+        this.setVida();
+        this.setCategoria();
+        this.setAptidaoFisica();
+        this.calcularDesempenho(); // Certifique-se de calcular o desempenho
+        this.energia = 100;
+    }
+    
     public String getNome() {
         return nome;
     }
@@ -199,7 +203,7 @@ public class Lutador {
 
         double idadeNormalizada = normalizar(this.idade, idadeIdealMin, idadeIdealMax, idadeMin, idadeMax);
         double lutasNormalizadas = normalizar(this.lutas, numeroDeLutasIdealMin, numeroDeLutasIdealMax, numeroDeLutasMin, numeroDeLutasMax);
-        double mediaNormalizada = (idadeNormalizada + lutasNormalizadas) / 2;
+        double mediaNormalizada = (idadeNormalizada * 6) + (lutasNormalizadas * 4) / 10;
 
         this.experiencia = (int) Math.round(mediaNormalizada * 10);
 
@@ -237,10 +241,13 @@ public class Lutador {
         }
     }
 
+    
     // Método para calcular a técnica
     public int calcularTecnica() {
-        // Técnica é influenciada pela experiência (50%) e idade (50%)
-        double tecnica = (this.experiencia * 0.5) + (normalizar(this.idade, 32, 38, 18, 40) * 5);
+        // Técnica é influenciada pela experiência (80%) e desempenho (20%)
+        double tecnica = (this.experiencia * 0.8) + (this.desempenho * 0.2);
+        if (this.tecnica < 1) this.tecnica = 1;
+        if (this.tecnica > 10) this.tecnica = 10;
         return (int) Math.round(tecnica);
     }
 
@@ -335,29 +342,8 @@ public class Lutador {
     }
 
 
-    // Método para calcular a Tecnica
-
-    public void setTecnica(){
-        // Intervalos ideias
-        double idadeIdealMin = 32;
-        double idadeIdealMax = 38;
-        double lutasIdealMin = 80;
-        double lutasIdealMax = 100;
-
-        // Limites dos requisitos
-        double idadeMin = 18;
-        double idadeMax = 40;
-        double lutasMin = 0;
-        double lutasMax = 100;
-
-        double idadeNormalizada = normalizar(this.idade, idadeIdealMin, idadeIdealMax, idadeMin, idadeMax);
-        double lutasNormalizadas = normalizar(this.luta, lutasIdealMin, lutasIdealMax, lutasMin, lutasMax);
-    }
-
-
-
-
-
+    
+    
 
     // Metodos dos atributos finais
 
@@ -388,10 +374,6 @@ public class Lutador {
         return danoFinal;
     }
 
-    public void calculoDaChanceDeContraAtaque(Lutador defensor){
-        int chanceContraAtaque = (defensor.forca + defensor.tecnica) * 2;
-
-    }
 
 
     // Método para aplicar a diminuição da força com base na energia
@@ -419,44 +401,86 @@ public class Lutador {
         if (this.agilidade < 0.5) this.agilidade = 0.5f;
     }
 
-    
+
+    // GESTÃO DE ENERGIA
 
 
+    // Definindo o estado fisico do lutador
 
-
-
-    // Metodos da luta
-
-    public void ganharLuta(){
-        setVitorias(this.getVitorias()+1);
+    public int getEstadoFisico() {
+        return estadoFisico;
     }
 
-    public void perderLuta(){
-        setDerrotas(this.getDerrotas() + 1);
+    public void setEstadoFisico(int idade, int aptidaoFisica) {
+        double idadeNormalizada = normalizar(idade, 18, 26, 18, 40);
+        double aptidaoFisicaNormalizada = normalizar(aptidaoFisica, 7, 10, 1, 10);
+        this.estadoFisico = (int) ((idadeNormalizada * 7) + (aptidaoFisicaNormalizada * 3));
     }
 
-    public void empatarLuta(){
-        setEmpates(getEmpates() + 1);
+     // Perda de energia baseada em turnos
+    public void perdaDeEnergiaTurno() {
+        int energiaPerdida;
+        if (this.estadoFisico >= 8) {
+            energiaPerdida = 1;
+        } else if (this.estadoFisico >= 5) {
+            energiaPerdida = 2;
+        } else if (this.estadoFisico >= 2) {
+            energiaPerdida = 3;
+        } else {
+            energiaPerdida = 4;
+        }
+
+        this.energia -= energiaPerdida; // Subtraindo a energia perdida da energia atual
+
+        // Adicionando validação para garantir que a energia não se torne negativa
+        if (this.energia < 0) {
+            this.energia = 0;
+        }
     }
 
-    public void apresentar(){
-        System.out.println("Chegou a hora, apresentamnos o lutador " + this.getNome());
-        System.out.println("diretamente do " +this.getNacionalidade());
-        System.out.println(this.getNome() + " tem " + getIdade() + " anos de idade.");
-        System.out.println("Com " + this.getAltura() + "m de altura.");
-        System.out.println("Pesando " + this.getPeso() + "Kg");
-        System.out.println("Já venceu " + this.getVitorias() + " vezes");
-        System.out.println("Pórem perdeu " + this.getDerrotas() + " lutas");
-        System.out.println("E empatou " + this.getEmpates());
-    }
 
-    public void status() {
-        System.out.println("Peso: " + this.getPeso() + "Kg");
-        System.out.println("Altura: " + this.getAltura() + "m");
-        System.out.println(this.getNome() + "é um peso " + this.getCategoria());
-        System.out.println("Vitorias: " + this.getVitorias());
-        System.out.println("Derrotas: " + this.getDerrotas());
-        System.out.println("Empates: " + this.getEmpates());
-        
+    // Perda de energia baseada em dano
+
+    // Perda de energia baseada em dano
+    public void perdaDeEnergiaDano(Lutador desafiante, Lutador desafiado) {
+    int energiaPerdida;
+    int danoSofrido = desafiado.calcularResistenciaAoGolpe(desafiante); // Calcula o dano sofrido pelo desafiado
+
+    // Valores ideais
+    int danoSofridoIdealMin = 1;
+    int danoSofridoIdealMax = 15;
+    int estadoFisicoIdealMin = 8;
+    int estadoFisicoIdealMax = 10;
+
+    // Valores limites
+    int danoSofridoMin = 1;
+    int danoSofridoMax = 50;
+    int estadoFisicoMin = 1;
+    int estadoFisicoMax = 10;
+
+    // Normalizando valores
+    float danoSofridoNormalizado = normalizar(danoSofrido, danoSofridoIdealMin, danoSofridoIdealMax, danoSofridoMin, danoSofridoMax);
+    float estadoFisicoNormalizado = normalizar(desafiado.estadoFisico, estadoFisicoIdealMin, estadoFisicoIdealMax, estadoFisicoMin, estadoFisicoMax);
+    float mediaNormalizada = (danoSofridoNormalizado + estadoFisicoNormalizado) * 5;
+
+    int valoresNormalizados = Math.round(mediaNormalizada);
+
+    // Determina se a força do desafiado é maior que a do desafiante
+    boolean forçaMaior = desafiado.forca > desafiante.forca;
+
+    if (forçaMaior && desafiado.estadoFisico >= 8 && danoSofrido <= 15) {
+        energiaPerdida = 0;
+    } else {
+        if (valoresNormalizados >= 8) {
+            energiaPerdida = 1;
+        } else if (valoresNormalizados >= 5) {
+            energiaPerdida = 2;
+        } else if (valoresNormalizados >= 2) {
+            energiaPerdida = 3;
+        } else {
+            energiaPerdida = 4;
+        }
+
+        this.energia -= energiaPerdida; // Subtrai a energia perdida da energia atual
     }
 }
