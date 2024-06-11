@@ -2,7 +2,7 @@ package POO_Guanabara.Aula06;
 
 import java.util.Random;
 
-public class Luta {
+public class Combate {
     private Lutador desafiado;
     private Lutador desafiante;
     private int rounds;

@@ -13,31 +13,34 @@ public class Lutador {
     private float altura;
     private float aptidaoFisica; //vai de 1 á 10 (Gerado automaticamente)
     private int lutas;
+
+    
+    
+    
+
+
+
+    // Atributos derivados (dos atributos gerais)
     private int vitorias;
     private int derrotas;
     private int empates;
-    
-    
 
-
-
-    // Atributos derivados
-    private String categoria;
-    private float forca; // vai de 1 á 10 (o atributo resistencia foi mesclado a força)
-    private float agilidade; // vai de 1 á 10
+    private String categoria; // Categoria do Lutador
+    private float forca; // vai de 1 á 10 (o atributo resistencia foi mesclado a força) , Se baseia na idade, peso, altura e aptidão fisica
+    private float agilidade; // vai de 1 á 10, Se baseia na idade, peso, altura e aptidão fisica
     private int energia; // vai de 0 á 100%
-    private int experiencia;
-    private int desempenho;
-    private int estadoFisico // Baseado na idade e aptidão fisica
+    private int experiencia; // Atributo baseado no numero de lutas e idade do lutador (60% idade, 40% numero de lutas)
+    private int desempenho; // Atributo baseado no numero de vitorias
+    private int estadoFisico; // Baseado na idade e aptidão fisica (70% idade e 30% Aptidão fisica)
     
 
 
     // Atributos finais
-    private float tecnica; // vai de 1 á 10
-    private int moral; // vai de 0 á 100%
-    private int danoDoGolpe; 
+    private float tecnica; // vai de 1 á 10 (Baseada 80% na experiencia, e 20% no desempenho )
+    private int confianca; // vai de 0 á 100%
+    private int danoDoGolpe; // Baseada na força, podendo variar de 3 á 5 vezes o valor da força do lutador.
     private int vidaBase = 300;
-    private int vida;
+    private int vida; // Vida base + ForçaVida (25% do total da força)
 
 
     // Variaveis para o sistema como um todo
@@ -49,28 +52,38 @@ public class Lutador {
     // Metodos dos atributos gerais
     
     // Construtor
-    public Lutador(String nome, String nacionalidade, int idade, float peso, float altura, int vitorias, int derrotas, int empates, int experiencia) {
+    public Lutador(String nome, String nacionalidade, int idade, float peso, float altura) {
+        //Gerando os atributos principais
         this.nome = nome;
         this.nacionalidade = nacionalidade;
         this.idade = idade;
         this.peso = peso;
         this.altura = altura;
-        this.vitorias = vitorias;
-        this.derrotas = derrotas;
-        this.empates = empates;
-        this.experiencia = experiencia;
+
+
+        //Gerando os dados das lutas, a experiencia e o desempenho.
+        gerarDadosDaLuta();
+        this.vitorias = getVitorias();
+        this.derrotas = getDerrotas();
+        this.empates = getEmpates();
+        this.experiencia = getExperiencia();
+        this.desempenho = getDesempenho();
+
         this.tecnica = calcularTecnica(); // Corrigido: Calcula a técnica ao criar o objeto
-        this.moral = 100;
+        this.confianca = 100;
         this.energia = 100;
         this.setAgilidade();
         this.setForca();
         this.setVida();
         this.setCategoria();
         this.setAptidaoFisica();
-        this.calcularDesempenho(); // Certifique-se de calcular o desempenho
         this.energia = 100;
     }
-    
+
+
+    // GERADOR
+    // Nesses metodos será possivel gerar automaticamente valores aleatorios para nome, idade, altura, nacionalidade e aptidão fisica.
+
     public String getNome() {
         return nome;
     }
@@ -78,6 +91,8 @@ public class Lutador {
     public void setNome(String nome) {
         this.nome = nome;
     }
+
+
 
     public String getNacionalidade() {
         return nacionalidade;
@@ -87,30 +102,39 @@ public class Lutador {
         this.nacionalidade = nacionalidade;
     }
 
+
+
     public int getIdade() {
         return idade;
     }
 
     public void setIdade(int idade) {
-        this.idade = idade;
+        this.idade = valorAleatorio.nextInt(40) +18 + 1;
     }
+
+
 
     public float getPeso() {
         return peso;
     }
 
     public void setPeso(float peso) {
-        this.peso = peso;
-        this.setCategoria(); // Corrigir chamada para setCategoria
+        this.peso = valorAleatorio.nextInt(120) + 50 + 1;
+        this.setCategoria(); 
     }
 
+
+
+    
     public float getAltura() {
         return altura;
     }
 
     public void setAltura(float altura) {
-        this.altura = altura;
+        this.altura = valorAleatorio.nextFloat() *0.5f + 1.5f;
     }
+
+
 
     public float getAptidaoFisica(){
         return aptidaoFisica;
@@ -119,6 +143,7 @@ public class Lutador {
     public void setAptidaoFisica() {
         this.aptidaoFisica = valorAleatorio.nextInt(10) + 1;
     }
+
     
 
     public String getCategoria() {
@@ -139,7 +164,8 @@ public class Lutador {
         }
     }
 
-    // Metodos para gerir a quantidade de lutas (Vitorias, Empates e Derrotas)
+    //********************************************************************************************************************************//
+
 
     // Métodos para gerir a quantidade de lutas (Vitórias, Empates e Derrotas)
     public void gerarDadosDaLuta(){
@@ -348,31 +374,39 @@ public class Lutador {
     // Metodos dos atributos finais
 
     // Método para calcular a vida
+
+    public int getVida() {
+        return vida;
+    }
+
     public void setVida() {
         double forcaVida = this.forca * 10; // 25% da vida é baseada na força
         this.vida = (int) (vidaBase + forcaVida); // Valor total da vida
     }
 
-    // Método para calcular o dano
+    // Método para calcular o dano do golpe
     public int calcularDanoDoGolpe() {
-    return (int) (this.forca * (valorAleatorio.nextFloat() * 2 + 3));
+    // O dano do golpe varia de 3 a 5 vezes o valor da força do lutador.
+        float multiplicador = valorAleatorio.nextFloat() * 2 + 3;
+        return Math.round(this.forca * multiplicador);
     }
 
-     // Método para calcular a resistência ao golpe
-     public int calcularResistenciaAoGolpe(Lutador atacante) {
-        // Passo 1: Calcular o dano do golpe
+    // Método para calcular a resistência ao golpe
+    public int calcularResistenciaAoGolpe(Lutador atacante) {
+    // Passo 1: Calcular o dano do golpe do atacante
         int danoDoGolpe = atacante.calcularDanoDoGolpe();
-        
-        // Passo 2: Calcular a porcentagem de resistência
+
+    // Passo 2: Calcular a porcentagem de resistência
         float multiplicador = valorAleatorio.nextFloat() + 5; // Valor aleatório entre 5 e 6
-        int porcentagemIgnorada = Math.round(this.forca * multiplicador);
-        
+        int porcentagemResistencia = Math.round(this.forca * multiplicador);
+
         // Passo 3: Aplicar a resistência ao dano do golpe
-        float danoIgnorado = danoDoGolpe * (porcentagemIgnorada / 100.0f);
+        float danoIgnorado = danoDoGolpe * (porcentagemResistencia / 100.0f);
         int danoFinal = Math.round(danoDoGolpe - danoIgnorado);
-        
+
         return danoFinal;
     }
+
 
 
 
@@ -393,17 +427,16 @@ public class Lutador {
         return valorAleatorio.nextInt((int)(this.agilidade * 10)) + 1;
     }
 
-    // Método para aplicar a diminuição da agilidade com base na energia e moral
+    // Método para aplicar a diminuição da agilidade com base na energia e confiança
     public void aplicarDiminuiçãoDeAgilidade() {
         float decrescimoEnergia = ((100 - this.energia) / 10) * 0.1f; // 0.1 de agilidade a cada 10% de energia perdida
-        float decrescimoMoral = ((100 - this.moral) / 25) * 0.1f; // 0.1 de agilidade a cada 25% de moral perdida
-        this.agilidade -= (decrescimoEnergia + decrescimoMoral);
+        float decrescimoConfianca = ((100 - this.confianca) / 25) * 0.1f; // 0.1 de agilidade a cada 25% de confiança perdida
+        this.agilidade -= (decrescimoEnergia + decrescimoConfianca);
         if (this.agilidade < 0.5) this.agilidade = 0.5f;
     }
 
 
     // GESTÃO DE ENERGIA
-
 
     // Definindo o estado fisico do lutador
 
@@ -440,11 +473,9 @@ public class Lutador {
 
 
     // Perda de energia baseada em dano
-
-    // Perda de energia baseada em dano
-    public void perdaDeEnergiaDano(Lutador desafiante, Lutador desafiado) {
+    public void perdaDeEnergiaDano(Lutador atacante, Lutador defensor) {
     int energiaPerdida;
-    int danoSofrido = desafiado.calcularResistenciaAoGolpe(desafiante); // Calcula o dano sofrido pelo desafiado
+    int danoSofrido = defensor.calcularResistenciaAoGolpe(atacante); // Calcula o dano sofrido pelo desafiado
 
     // Valores ideais
     int danoSofridoIdealMin = 1;
@@ -459,16 +490,16 @@ public class Lutador {
     int estadoFisicoMax = 10;
 
     // Normalizando valores
-    float danoSofridoNormalizado = normalizar(danoSofrido, danoSofridoIdealMin, danoSofridoIdealMax, danoSofridoMin, danoSofridoMax);
-    float estadoFisicoNormalizado = normalizar(desafiado.estadoFisico, estadoFisicoIdealMin, estadoFisicoIdealMax, estadoFisicoMin, estadoFisicoMax);
-    float mediaNormalizada = (danoSofridoNormalizado + estadoFisicoNormalizado) * 5;
+    double danoSofridoNormalizado = normalizar(danoSofrido, danoSofridoIdealMin, danoSofridoIdealMax, danoSofridoMin, danoSofridoMax);
+    double estadoFisicoNormalizado = normalizar(defensor.estadoFisico, estadoFisicoIdealMin, estadoFisicoIdealMax, estadoFisicoMin, estadoFisicoMax);
+    double mediaNormalizada = (danoSofridoNormalizado + estadoFisicoNormalizado) * 5;
 
-    int valoresNormalizados = Math.round(mediaNormalizada);
+    long valoresNormalizados = Math.round(mediaNormalizada);
 
     // Determina se a força do desafiado é maior que a do desafiante
-    boolean forçaMaior = desafiado.forca > desafiante.forca;
+    boolean forcaMaior = defensor.forca > atacante.forca;
 
-    if (forçaMaior && desafiado.estadoFisico >= 8 && danoSofrido <= 15) {
+    if (forcaMaior && defensor.estadoFisico >= 8 && danoSofrido <= 15) {
         energiaPerdida = 0;
     } else {
         if (valoresNormalizados >= 8) {
@@ -483,4 +514,5 @@ public class Lutador {
 
         this.energia -= energiaPerdida; // Subtrai a energia perdida da energia atual
     }
+}
 }

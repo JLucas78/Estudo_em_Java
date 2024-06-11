@@ -11,7 +11,7 @@ public class Main {
         lutador[4] = new Lutador("Rico", "Mexico", 34, 76f, 1.85f, 13, 3, 1);
         lutador[5] = new Lutador("Jon", "EUA", 25, 103f, 1.87f, 13, 0, 5);
 
-        Luta UEC01 = new Luta();
+        Combate UEC01 = new Combate();
         UEC01.marcarLuta(lutador[4], lutador[1]);
         UEC01.lutar();
     }
