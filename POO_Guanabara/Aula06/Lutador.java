@@ -13,6 +13,7 @@ public class Lutador {
     private float altura;
     private float aptidaoFisica; //vai de 1 á 10 (Gerado automaticamente)
     private int lutas;
+    private int vidaBase = 300;
 
     
     
@@ -30,16 +31,15 @@ public class Lutador {
     private float agilidade; // vai de 1 á 10, Se baseia na idade, peso, altura e aptidão fisica
     private int energia; // vai de 0 á 100%
     private int experiencia; // Atributo baseado no numero de lutas e idade do lutador (60% idade, 40% numero de lutas)
-    private int desempenho; // Atributo baseado no numero de vitorias
+    private int desempenho; // Atributo baseado na porcentagem de vitorias, abaixo de 10% será 1 (Valor minimo), acima de 60% será 10 (Valor maximo).
     private int estadoFisico; // Baseado na idade e aptidão fisica (70% idade e 30% Aptidão fisica)
     
 
 
     // Atributos finais
     private float tecnica; // vai de 1 á 10 (Baseada 80% na experiencia, e 20% no desempenho )
-    private int confianca; // vai de 0 á 100%
-    private int danoDoGolpe; // Baseada na força, podendo variar de 3 á 5 vezes o valor da força do lutador.
-    private int vidaBase = 300;
+    private int confianca; // vai de 0 á 100% (Baseada inicialmente no desempenho geral do lutador)
+    private int danoDoGolpe; // Baseada na força, podendo variar de 3 á 5 vezes o valor da força do lutador. 
     private int vida; // Vida base + ForçaVida (25% do total da força)
 
 
@@ -248,24 +248,30 @@ public class Lutador {
 
     public void calcularDesempenho() {
         // Intervalos ideais
-        double numeroIdealDeVitoriasMin = 60;
-        double numeroIdealDeVitoriasMax = 100;
-
+        double porcentagemIdealDeVitoriasMin = 60;
+        double porcentagemIdealDeVitoriasMax = 100;
+    
         // Limites dos requisitos
-        double numeroDeVitoriasMin = 1;
-        double numeroDeVitoriasMax = 100;
-
-        double vitoriasNormalizadas = normalizar(this.vitorias, numeroIdealDeVitoriasMin, numeroIdealDeVitoriasMax, numeroDeVitoriasMin, numeroDeVitoriasMax);
+        double porcentagemDeVitoriasMin = 10;
+        double porcentagemDeVitoriasMax = 100;
+    
+        // Certificando que a divisão por zero não ocorre
+        double aproveitamento = this.lutas > 0 ? ((double) this.vitorias / this.lutas) * 100 : 0; 
+    
+        double vitoriasNormalizadas = normalizar(aproveitamento, porcentagemIdealDeVitoriasMin, porcentagemIdealDeVitoriasMax, porcentagemDeVitoriasMin, porcentagemDeVitoriasMax
+        );
+    
         this.desempenho = (int) Math.round(vitoriasNormalizadas * 10);
-
-        if (this.desempenho < 1){
+    
+        if (this.desempenho < 1) {
             this.desempenho = 1;
         }
-
+    
         if (this.desempenho > 10) {
             this.desempenho = 10;
         }
     }
+    
 
     
     // Método para calcular a técnica
@@ -406,6 +412,18 @@ public class Lutador {
 
         return danoFinal;
     }
+
+    // CONSTRUÇÃO DA MANIPULAÇÃO DO ATRIBUTO CONFIANÇA.
+
+    public int getConfianca() {
+        return confianca;
+    }
+
+    public void setConfianca(int desempenho) {
+        this.confianca = desempenho * 10;
+    }
+
+    
 
 
 
