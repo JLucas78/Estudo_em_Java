@@ -413,7 +413,10 @@ public class Lutador {
         return danoFinal;
     }
 
+
+    // GESTÃO DE CONFIANÇA
     // CONSTRUÇÃO DA MANIPULAÇÃO DO ATRIBUTO CONFIANÇA.
+    
 
     public int getConfianca() {
         return confianca;
@@ -455,6 +458,7 @@ public class Lutador {
 
 
     // GESTÃO DE ENERGIA
+    // CONSTRUÇÃO DA MANIPULAÇÃO DO ATRIBUTO ENERGIA.
 
     // Definindo o estado fisico do lutador
 
