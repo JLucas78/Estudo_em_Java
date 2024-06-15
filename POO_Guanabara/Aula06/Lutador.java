@@ -53,12 +53,11 @@ public class Lutador {
         this.empates = getEmpates();
         this.experiencia = getExperiencia();
         this.desempenho = getDesempenho();
-
+        
         this.tecnica = calcularTecnica(); // Corrigido: Calcula a técnica ao criar o objeto
         this.energia = 100;
         this.setAgilidade();
         this.setForca();
-        this.setVida();
         this.setCategoria();
         this.setAptidaoFisica();
     
@@ -448,7 +447,7 @@ public class Lutador {
     // Calcular a chance de esquiva
     public void CalcularChanceDeEsquiva(Lutador atacante, Lutador defensor) {
         if(atacante.calcularVelocidadeDeAtaque() > defensor.calcularVelocidadeDeEsquiva()){
-            defensor.setVida()
+            defensor.setVida(null);
         } else {
             // Implemente o que acontece caso o defensor consiga esquivar
         }
@@ -545,5 +544,4 @@ public class Lutador {
 
         this.energia -= energiaPerdida; // Subtrai a energia perdida da energia atual
     }
-}
-}
+    }
