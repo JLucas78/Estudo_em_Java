@@ -2,8 +2,6 @@ package POO_Guanabara.Aula06;
 
 import java.util.Random;
 
-
-
 public class Lutador {
     // Atributos gerais
     private String nome;
@@ -11,15 +9,9 @@ public class Lutador {
     private int idade;
     private float peso;
     private float altura;
-    private float aptidaoFisica; //vai de 1 á 10 (Gerado automaticamente)
+    private float aptidaoFisica; // Vai de 1 a 10 (Gerado automaticamente)
     private int lutas;
     private int vidaBase = 300;
-
-    
-    
-    
-
-
 
     // Atributos derivados (dos atributos gerais)
     private int vitorias;
@@ -27,41 +19,34 @@ public class Lutador {
     private int empates;
 
     private String categoria; // Categoria do Lutador
-    private float forca; // vai de 1 á 10 (o atributo resistencia foi mesclado a força) , Se baseia na idade, peso, altura e aptidão fisica
-    private float agilidade; // vai de 1 á 10, Se baseia na idade, peso, altura e aptidão fisica
-    private int energia; // vai de 0 á 100%
-    private int experiencia; // Atributo baseado no numero de lutas e idade do lutador (60% idade, 40% numero de lutas)
-    private int desempenho; // Atributo baseado na porcentagem de vitorias, abaixo de 10% será 1 (Valor minimo), acima de 60% será 10 (Valor maximo).
-    private int estadoFisico; // Baseado na idade e aptidão fisica (70% idade e 30% Aptidão fisica)
-    
-
+    private float forca; // Vai de 1 a 10 (O atributo resistencia foi mesclado à força), se baseia na idade, peso, altura e aptidão física
+    private float agilidade; // Vai de 1 a 10, se baseia na idade, peso, altura e aptidão física
+    private int energia; // Vai de 0 a 100%
+    private int experiencia; // Atributo baseado no número de lutas e idade do lutador (60% idade, 40% número de lutas)
+    private int desempenho; // Atributo baseado na porcentagem de vitórias, abaixo de 10% será 1 (Valor mínimo), acima de 60% será 10 (Valor máximo).
+    private int estadoFisico; // Baseado na idade e aptidão física (70% idade e 30% aptidão física)
 
     // Atributos finais
-    private float tecnica; // vai de 1 á 10 (Baseada 80% na experiencia, e 20% no desempenho )
-    private int confianca; // vai de 0 á 100% (Baseada inicialmente no desempenho geral do lutador)
-    private int danoDoGolpe; // Baseada na força, podendo variar de 3 á 5 vezes o valor da força do lutador. 
+    private float tecnica; // Vai de 1 a 10 (Baseada 80% na experiência, e 20% no desempenho)
+    private int confianca; // Vai de 0 a 100% (Baseada inicialmente no desempenho geral do lutador)
+    private int danoDoGolpe; // Baseada na força, podendo variar de 3 a 5 vezes o valor da força do lutador
     private int vida; // Vida base + ForçaVida (25% do total da força)
 
-
-    // Variaveis para o sistema como um todo
+    // Variáveis para o sistema como um todo
     Random valorAleatorio = new Random();
 
-
-
-
-    // Metodos dos atributos gerais
+    // Métodos dos atributos gerais
     
     // Construtor
     public Lutador(String nome, String nacionalidade, int idade, float peso, float altura) {
-        //Gerando os atributos principais
+        // Gerando os atributos principais
         this.nome = nome;
         this.nacionalidade = nacionalidade;
         this.idade = idade;
         this.peso = peso;
         this.altura = altura;
 
-
-        //Gerando os dados das lutas, a experiencia e o desempenho.
+        // Gerando os dados das lutas, a experiência e o desempenho.
         gerarDadosDaLuta();
         this.vitorias = getVitorias();
         this.derrotas = getDerrotas();
@@ -70,14 +55,13 @@ public class Lutador {
         this.desempenho = getDesempenho();
 
         this.tecnica = calcularTecnica(); // Corrigido: Calcula a técnica ao criar o objeto
-        this.confianca = 100;
         this.energia = 100;
         this.setAgilidade();
         this.setForca();
         this.setVida();
         this.setCategoria();
         this.setAptidaoFisica();
-        this.energia = 100;
+    
     }
 
 
@@ -379,16 +363,16 @@ public class Lutador {
 
     // Metodos dos atributos finais
 
-    // Método para calcular a vida
-
-    public int getVida() {
+     // Método para calcular a vida
+     public int getVida() {
         return vida;
     }
 
-    public void setVida() {
+    public void setVida(Lutador lutador) {
         double forcaVida = this.forca * 10; // 25% da vida é baseada na força
         this.vida = (int) (vidaBase + forcaVida); // Valor total da vida
     }
+
 
     // Método para calcular o dano do golpe
     public int calcularDanoDoGolpe() {
@@ -398,15 +382,15 @@ public class Lutador {
     }
 
     // Método para calcular a resistência ao golpe
-    public int calcularResistenciaAoGolpe(Lutador atacante) {
+    public int calcularResistenciaAoGolpe(Lutador lutador) {
     // Passo 1: Calcular o dano do golpe do atacante
-        int danoDoGolpe = atacante.calcularDanoDoGolpe();
+        int danoDoGolpe = lutador.calcularDanoDoGolpe();
 
     // Passo 2: Calcular a porcentagem de resistência
         float multiplicador = valorAleatorio.nextFloat() + 5; // Valor aleatório entre 5 e 6
         int porcentagemResistencia = Math.round(this.forca * multiplicador);
 
-        // Passo 3: Aplicar a resistência ao dano do golpe
+    // Passo 3: Aplicar a resistência ao dano do golpe
         float danoIgnorado = danoDoGolpe * (porcentagemResistencia / 100.0f);
         int danoFinal = Math.round(danoDoGolpe - danoIgnorado);
 
@@ -426,10 +410,17 @@ public class Lutador {
         this.confianca = desempenho * 10;
     }
 
+    public void ganharConfiancaEsquiva(){
+
+    }
+
+
+
     
 
 
 
+    //********************************************************************************************************************/
 
     // Método para aplicar a diminuição da força com base na energia
     public void aplicarDiminuiçãoDeForca() {
@@ -438,16 +429,34 @@ public class Lutador {
         if (this.forca < 0.5) this.forca = 0.5f;
     }
 
-     
-    // Métodos para calcular a velocidade de ataque e esquiva
+    //*************************************************/
+
+    //METODOS PARA CALCULAR A ESQUIVA
+
+    
+
+    // Calcular a velocidade de ataque
     public int calcularVelocidadeDeAtaque() {
         return valorAleatorio.nextInt((int)(this.agilidade * 10)) + 1;
     }
 
+    // Calcular a velocidade de esquiva
     public int calcularVelocidadeDeEsquiva() {
         return valorAleatorio.nextInt((int)(this.agilidade * 10)) + 1;
     }
 
+    // Calcular a chance de esquiva
+    public void CalcularChanceDeEsquiva(Lutador atacante, Lutador defensor) {
+        if(atacante.calcularVelocidadeDeAtaque() > defensor.calcularVelocidadeDeEsquiva()){
+            defensor.setVida()
+        } else {
+            // Implemente o que acontece caso o defensor consiga esquivar
+        }
+    }}
+
+
+
+    //************************************/
     // Método para aplicar a diminuição da agilidade com base na energia e confiança
     public void aplicarDiminuiçãoDeAgilidade() {
         float decrescimoEnergia = ((100 - this.energia) / 10) * 0.1f; // 0.1 de agilidade a cada 10% de energia perdida
