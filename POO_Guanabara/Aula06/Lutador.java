@@ -53,7 +53,8 @@ public class Lutador {
         this.empates = getEmpates();
         this.experiencia = getExperiencia();
         this.desempenho = getDesempenho();
-        
+
+        this.vida = getVida();
         this.tecnica = calcularTecnica(); // Corrigido: Calcula a técnica ao criar o objeto
         this.energia = 100;
         this.setAgilidade();
@@ -317,6 +318,10 @@ public class Lutador {
         if (this.forca > 10) this.forca = 10;
     }
 
+    public float getForca() {
+        return forca;
+    }
+
 
      
    
@@ -367,9 +372,10 @@ public class Lutador {
         return vida;
     }
 
-    public void setVida(Lutador lutador) {
-        double forcaVida = this.forca * 10; // 25% da vida é baseada na força
-        this.vida = (int) (vidaBase + forcaVida); // Valor total da vida
+    int forcaVida = this.getForca() * 10;// 25% da vida é baseada na força
+
+    public void setVida() {
+        this.vida = this.forcaVida + this.vidaBase;
     }
 
 
@@ -444,14 +450,17 @@ public class Lutador {
         return valorAleatorio.nextInt((int)(this.agilidade * 10)) + 1;
     }
 
-    // Calcular a chance de esquiva
     public void CalcularChanceDeEsquiva(Lutador atacante, Lutador defensor) {
-        if(atacante.calcularVelocidadeDeAtaque() > defensor.calcularVelocidadeDeEsquiva()){
-            defensor.setVida(null);
-        } else {
+        if (defensor.calcularVelocidadeDeEsquiva() > atacante.calcularVelocidadeDeAtaque()) {
             // Implemente o que acontece caso o defensor consiga esquivar
+            System.out.println("O defensor " + defensor.getNome() + " conseguiu esquivar do ataque!");
+        } else {
+            // Implemente o que acontece caso o atacante acerte o golpe
+            System.out.println("O atacante " + atacante.getNome() + " acertou o golpe no defensor " + defensor.getNome() + "!");
+            defensor.setVida(defensor.getVida() - defensor.calcularResistenciaAoGolpe(atacante));
         }
-    }}
+    }
+    
 
 
 
@@ -544,4 +553,4 @@ public class Lutador {
 
         this.energia -= energiaPerdida; // Subtrai a energia perdida da energia atual
     }
-    }
+    }}
