@@ -30,7 +30,8 @@ public class Lutador {
     private float tecnica; // Vai de 1 a 10 (Baseada 80% na experiência, e 20% no desempenho)
     private int confianca; // Vai de 0 a 100% (Baseada inicialmente no desempenho geral do lutador)
     private int danoDoGolpe; // Baseada na força, podendo variar de 3 a 5 vezes o valor da força do lutador
-    private int vida; // Vida base + ForçaVida (25% do total da força)
+    private int vida; // Vida base + Vida Força (25% do total da vida depende da força)
+    int vidaForca = (int)this.getForca() * 10;// 25% da vida é baseada na força
 
     // Variáveis para o sistema como um todo
     Random valorAleatorio = new Random();
@@ -54,13 +55,14 @@ public class Lutador {
         this.experiencia = getExperiencia();
         this.desempenho = getDesempenho();
 
-        this.vida = getVida();
+        this.calcularVidaInicial();
         this.tecnica = calcularTecnica(); // Corrigido: Calcula a técnica ao criar o objeto
         this.energia = 100;
         this.setAgilidade();
         this.setForca();
         this.setCategoria();
         this.setAptidaoFisica();
+        this.calcularConfiancaInicial(desempenho);
     
     }
 
@@ -367,17 +369,26 @@ public class Lutador {
 
     // Metodos dos atributos finais
 
-     // Método para calcular a vida
+    //************************************************************************/
+
+    // Métodos para calcular e manipular a vida
+    
+    public void calcularVidaInicial(){
+        this.vida = this.vidaBase + this.vidaForca;
+    }
+
      public int getVida() {
         return vida;
     }
 
-    int forcaVida = this.getForca() * 10;// 25% da vida é baseada na força
-
-    public void setVida() {
-        this.vida = this.forcaVida + this.vidaBase;
+    public void setVida(int novaVida) {
+        this.vida = novaVida;
     }
 
+    //*************************************************************************/
+
+  
+    
 
     // Método para calcular o dano do golpe
     public int calcularDanoDoGolpe() {
@@ -403,42 +414,82 @@ public class Lutador {
     }
 
 
+    //*********************************************************************************************************************/
+
+
     // GESTÃO DE CONFIANÇA
     // CONSTRUÇÃO DA MANIPULAÇÃO DO ATRIBUTO CONFIANÇA.
-    
+
+    public int confiancaInicial;
+
+    public void calcularConfiancaInicial(int desempenho) {
+        this.confianca = desempenho * 10;
+        this.confiancaInicial = desempenho * 10;
+    }
 
     public int getConfianca() {
         return confianca;
     }
 
-    public void setConfianca(int desempenho) {
-        this.confianca = desempenho * 10;
+    public int getConfiancaInicial() {
+        return confiancaInicial;
     }
 
-    public void ganharConfiancaEsquiva(){
-
+    public void somarConfianca(int valor) {
+        double ganhoDeConfianca = obterGanhoDeConfianca();
+        this.confianca = this.getConfianca() + (int)(valor * ganhoDeConfianca);
     }
 
+    public void subtrairConfianca(int valor) {
+        double percaDeConfianca = obterPercaDeConfianca();
+        this.confianca = this.getConfianca() - (int)(valor * percaDeConfianca);
+    }
 
+    // Alterar confiança baseado na esquiva
 
-    
+    public void ganharConfiancaEsquiva(Lutador lutador) {
+        lutador.somarConfianca(4);
+    }
 
+    public void perderConfiancaEsquiva(Lutador lutador) {
+        lutador.subtrairConfianca(4);
+    }
+
+    // Modificadores de confiança
+    // Nesse trecho do codigo vou construir um parametro diferente para cada lutador. Cada lutador pode ganhar ou perder um certo nivel de confiaça.
+    // Isso irá depender da confiança original.
+
+    private double obterGanhoDeConfianca() {
+        if (this.getConfiancaInicial() > 80) {
+            return 1.5;
+        } else if (this.getConfiancaInicial() > 50) {
+            return 1.2;
+        } else if (this.getConfiancaInicial() > 30) {
+            return 1.0;
+        } else {
+            return 0.8;
+        }
+    }
+
+    private double obterPercaDeConfianca() {
+        if (this.getConfiancaInicial() > 80) {
+            return 0.8;
+        } else if (this.getConfiancaInicial() > 50) {
+            return 1.0;
+        } else if (this.getConfiancaInicial() > 30) {
+            return 1.2;
+        } else {
+            return 1.5;
+        }
+    }
 
 
     //********************************************************************************************************************/
 
-    // Método para aplicar a diminuição da força com base na energia
-    public void aplicarDiminuiçãoDeForca() {
-        float decrescimo = ((100 - this.energia) / 10) * 0.1f; // 0.1 de força a cada 10% de energia perdida
-        this.forca -= decrescimo;
-        if (this.forca < 0.5) this.forca = 0.5f;
-    }
-
+   
     //*************************************************/
 
     //METODOS PARA CALCULAR A ESQUIVA
-
-    
 
     // Calcular a velocidade de ataque
     public int calcularVelocidadeDeAtaque() {
@@ -452,17 +503,17 @@ public class Lutador {
 
     public void CalcularChanceDeEsquiva(Lutador atacante, Lutador defensor) {
         if (defensor.calcularVelocidadeDeEsquiva() > atacante.calcularVelocidadeDeAtaque()) {
-            // Implemente o que acontece caso o defensor consiga esquivar
+            // o que acontece caso o defensor consiga esquivar
             System.out.println("O defensor " + defensor.getNome() + " conseguiu esquivar do ataque!");
+            ganharConfiancaEsquiva(defensor);
+            perderConfiancaEsquiva(atacante);
         } else {
-            // Implemente o que acontece caso o atacante acerte o golpe
+            // o que acontece caso o atacante acerte o golpe
             System.out.println("O atacante " + atacante.getNome() + " acertou o golpe no defensor " + defensor.getNome() + "!");
             defensor.setVida(defensor.getVida() - defensor.calcularResistenciaAoGolpe(atacante));
         }
     }
     
-
-
 
     //************************************/
     // Método para aplicar a diminuição da agilidade com base na energia e confiança
@@ -472,6 +523,14 @@ public class Lutador {
         this.agilidade -= (decrescimoEnergia + decrescimoConfianca);
         if (this.agilidade < 0.5) this.agilidade = 0.5f;
     }
+
+     // Método para aplicar a diminuição da força com base na energia
+     public void aplicarDiminuiçãoDeForca() {
+        float decrescimo = ((100 - this.energia) / 10) * 0.1f; // 0.1 de força a cada 10% de energia perdida
+        this.forca -= decrescimo;
+        if (this.forca < 0.5) this.forca = 0.5f;
+    }
+
 
 
     // GESTÃO DE ENERGIA
